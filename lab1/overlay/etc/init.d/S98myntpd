@@ -1,0 +1,35 @@
+#!/bin/sh
+
+DAEMON_NAME="$0"
+
+daemon_msg() {
+    printf "%s: %s\n" "$DAEMON_NAME" "$1"
+}
+
+err_msg() {
+    printf "%s:\n%s\n" "$DAEMON_NAME" "$1" >&2
+    exit 1
+}
+
+start() {
+    daemon_msg "Tryna set up NTPDATE..."
+    ntpdate -db 0.pl.pool.ntp.org || ntpdate -db pool.ntp.org
+}
+
+stop() {
+    err_msg "This daemon can't sensibly stop."
+}
+
+restart() {
+    err_msg "This daemon can't sensibly restart."
+}
+
+case "$1" in
+    start|stop|restart)
+        "$1";;
+    reload)
+        restart;;
+    *)
+        err_msg "Usage: $0 {start|stop|restart|reload}"
+esac
+
