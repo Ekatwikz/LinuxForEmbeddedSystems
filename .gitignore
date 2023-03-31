@@ -1,6 +1,11 @@
 # python stuff
 __pycache__
 
+# submission stuff
+*.gz
+*.odt
+*.pdf
+
 # vim stuff
 *.swp
 *~

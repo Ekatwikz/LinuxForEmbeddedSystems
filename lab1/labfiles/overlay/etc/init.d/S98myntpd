@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env sh
 
 DAEMON_NAME="$0"
 
@@ -11,7 +11,14 @@ err_msg() {
     exit 1
 }
 
+simple_ping_test() {
+    daemon_msg "Doing a simple ping test..."
+    ping -c1 8.8.8.8 || (daemon_msg "Couldn't ping. Waiting 5s before trying again." && sleep 5 && ping -c1 8.8.8.8) || err_msg "Failed to ping."
+    echo # Looks slightly tidier
+}
+
 start() {
+    simple_ping_test
     daemon_msg "Tryna set up NTPDATE..."
     ntpdate -db 0.pl.pool.ntp.org || ntpdate -db pool.ntp.org
 }

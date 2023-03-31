@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!/usr/bin/env python3
 
 from my_email_util import send_email
 from time import gmtime, strftime
