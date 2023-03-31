@@ -20,7 +20,7 @@ simple_ping_test() {
 start() {
     simple_ping_test
     daemon_msg "Tryna set up NTPDATE..."
-    ntpdate -db 0.pl.pool.ntp.org || ntpdate -db pool.ntp.org
+    ntpdate -b 0.pl.pool.ntp.org || ntpdate -b pool.ntp.org
 }
 
 stop() {
