@@ -1,10 +1,15 @@
 # python stuff
 __pycache__
 
-# submission stuff
+# archives +etc
 *.gz
+*.bz2
 *.odt
 *.pdf
+
+# clang stuff
+.cache
+compile_commands.json
 
 # vim stuff
 *.swp
