@@ -1,9 +1,0 @@
-config BR2_PACKAGE_LED_MEMORY_GAME
-	bool "led-memory-game"
-	select BR2_PACKAGE_LIBGPIOD
-	help
-	  A simple game using buttons and LEDs, requires the libgpiod abstractions
-
-	  https://github.com/ekatwikz/LinuxForEmbeddedSystems
-	  https://github.com/ekatwikz/led-memory-game # TODO
-
