@@ -16,7 +16,7 @@ Student: Emmanuel Katwikirize
 ## Procedure to recreate the design from the attached archive
 The archive can be unpacked and a symlink to the `overlay` directory can be created within the user's `./buildroot-...` directory.  
 `./lab1.rpi.config` can be copied to the user's `./buildroot-...` directory and renamed to `.config`  
-The user can then run make.
+The user can then run `make menuconfig` and save, then `make`.
 
 ## Description of the solution
 ### <u>Config</u>
@@ -31,11 +31,11 @@ Details of the config are in the next section
 ### <u>Startup/Shutdown scripts</u>
 I created an email function in python. I created a python script for startup and shutdown, and used the email function to send emails from them.  
 I created a simple shell script (using [an example in the buildroot manuals](https://buildroot.org/downloads/manual/manual.html#adding-packages-start-script) for reference) to have the python scripts run at startup and shutdown  
-These scripts didn't truly run as daemons since I only used the script start script to run them a single time at startup, and a single time at shutdown, each time they would simply exit once the email is sent  
-An alternate solution may have been to use cron, or to use a truly long running python script as a legitimate daemon  
+These scripts didn't truly run as daemons since I only used the start script to run them a single time at startup, and a single time at shutdown, each time they would simply exit once the email is sent   
+An alternate solution may have been to use cron, or to use a truly long running python script as a legitimate daemon, or (at least for NTP) to use the package's daemon  
 Regardless, the emails were sent correctly at startup and shutdown  
-Both scripts started by using a very simple ICMP echo request function to google's DNS as a rudimentary check for network connectivity  
-My ntp and python scripts were all overlayed onto the /etc/init.d directory  
+Both scripts started by using a very simple ICMP echo request function to Google's DNS as a rudimentary check for network connectivity  
+My NTP and Python scripts were all overlayed onto the /etc/init.d directory  
 More details of how I configured the overlay are in the next section
 
 ## Description of the modifications of BR and kernel configurations
@@ -48,9 +48,9 @@ I used our lab's malina directory to have a reasonable disk access speed
 I did not change the default external toolchain (Arm AArch64 2021.07)  
 
 #### <u>Primary download site</u>
-- During the lab, I set `BR2_PRIMARY_SITE="http://192.168.137.24/dl"` to set the primary set that buildroot would download froms
+- During the lab, I set `BR2_PRIMARY_SITE="http://192.168.137.24/dl"` to set the primary site that buildroot would download from
 
-#### <u>overlay</u>
+#### <u>Overlay</u>
 - I set `BR2_ROOTFS_OVERLAY="overlay"`, a symlink to a folder containing folders to be overlaid onto the root filesystem
 
 #### <u>initramfs</u>
@@ -77,13 +77,14 @@ this seems to be enough to have a server to ssh into, I didn't configure it furt
 - I set `BR2_PACKAGE_NTP_NTPDATE=y` to enable the ntpdate utility program to set the loca time/date from an NTP server
 
 ## Description of the system testing
-I used the `start-qemu.sh` (placed in the /buildroot/output/images/ directory) to test the system in Qemu  
+I used the `start-qemu.sh` script (placed in the /buildroot/output/images/ directory) to test the system in Qemu, using my lab1.qemu.defconfig  
 
 I omit the usual chatter from the kernel ring buffer.  
 The first message from something I configured is from dropbear announcing that sshd was successfully started:  
 ![Dropbear SSHd and myntpd](./testing-screenshots/1.png)  
 The above screenshot also shows S98myntpd testing whether the network is available with a simple ping, which is successful  
 It then tries a couple NTP servers and fails. This is a known issue within some PW networks.  
+The script was confirmed to work during the actual lab.  
 
 The following screenshot shows S99myemailerd testing the network as well, then announcing that it sent the startup email.  
 We can see that the overlay folder indeed works correctly when we look into /etc/init.d  
@@ -96,3 +97,6 @@ I SSH into 2222 because that's how I mapped the forwarding of the ports in the Q
 
 Back on the system, I test that I can use the python interpreter, and that powering off the system sends the shutdown email as required  
 ![Python and Shutdown](./testing-screenshots/4.png)
+
+The script spams.  
+![Script emails](./testing-screenshots/5.png)
