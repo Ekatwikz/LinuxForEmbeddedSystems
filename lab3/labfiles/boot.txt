@@ -1,0 +1,10 @@
+if gpio input 12 ; then
+    echo Button is on!!
+    sleep 10
+    reset
+else
+    echo Button is off...
+    sleep 10
+    reset
+fi
+

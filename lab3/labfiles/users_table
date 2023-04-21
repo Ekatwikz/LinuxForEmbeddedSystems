@@ -1,0 +1,5 @@
+example -1 idk -1 =password /home/example /bin/sh - This is an example user
+smbusermain -1 smbgroup -1 =password1 - /bin/sh - This is test user No.1 for smb (can be logged into)
+smbusertest1 -1 smbgroup -1 =password1 - /bin/false - This is test user No.1 for smb (can be logged into, no shell)
+smbusertest2 -1 smbgroup -1 !=password2 - /bin/false - This is test user No.2 for smb (cant be logged in)
+smbusertest3 -1 smbgroup -1 !=password3 - /bin/false - This is test user No.3 for smb (cant be logged in)
