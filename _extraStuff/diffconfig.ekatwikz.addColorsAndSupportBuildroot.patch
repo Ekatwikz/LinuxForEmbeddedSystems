@@ -1,0 +1,45 @@
+diff --git a/scripts/diffconfig b/scripts/diffconfig
+index 43f0f3d273ae..e22d6dea3b14 100755
+--- a/scripts/diffconfig
++++ b/scripts/diffconfig
+@@ -41,11 +41,11 @@ def readconfig(config_file):
+     d = {}
+     for line in config_file:
+         line = line[:-1]
+-        if line[:7] == "CONFIG_":
+-            name, val = line[7:].split("=", 1)
++        if len(line) > 0 and line[0] != "#":
++            name, val = line.split("=", 1)
+             d[name] = val
+-        if line[-11:] == " is not set":
+-            d[line[9:-11]] = "n"
++        elif "is not set" in line:
++            d[line.split(" ", 2)[1]] = "# [[ is not set ]]"
+     return d
+ 
+ def print_config(op, config, value, new_value):
+@@ -59,11 +59,11 @@ def print_config(op, config, value, new_value):
+                 print("CONFIG_%s=%s" % (config, new_value))
+     else:
+         if op=="-":
+-            print("-%s %s" % (config, value))
++            print("\033[31m%s%s=%s\033[0m" % (op, config, value))
+         elif op=="+":
+-            print("+%s %s" % (config, new_value))
+-        else:
+-            print(" %s %s -> %s" % (config, value, new_value))
++            print("\033[32m%s%s=%s\033[0m" % (op, config, new_value))
++        else: # Value changed
++            print("%s%s=\033[32m%s\033[0m \033[1;37m# [ WAS: \033[31m%s\033[1;37m ]\033[0m" % (op, config, new_value, value))
+ 
+ def show_diff():
+     global merge_style
+@@ -120,7 +120,7 @@ def show_diff():
+             del b[config]
+     changed.sort()
+     for config in changed:
+-        print_config("->", config, a[config], b[config])
++        print_config(" ", config, a[config], b[config])
+         del b[config]
+ 
+     # now print items in b but not in a
