@@ -1,10 +1,40 @@
-if gpio input 12 ; then
-    echo Button is on!!
-    sleep 10
-    reset
+fdt addr ${fdt_addr}
+fdt get value bootargs_orig /chosen bootargs
+mmc dev 0
+
+gpio clear 22 # Green (Reserved - UBoot)
+gpio set 23 # Yellow (My Utility)
+gpio clear 24 # Blue (Reserved - Default Rescue)
+gpio set 27 # Red (My Rescue)
+
+echo ===
+echo LEDs Reset
+echo Waiting a sec for SW3 (GPIO 10):
+echo Do nothing for Utilities
+echo Press for Rescue
+sleep 1
+
+if gpio input 10 ; then
+    gpio clear 23
+    echo SW3 pressed!
+
+    sleep 1
+    echo Booting Rescue!
+    echo ===
+
+    fatload mmc 0:1 ${kernel_addr_r} /user/ImageLab3MyRescue
+    setenv bootargs "${bootargs_orig} console=ttyAMA0"
+    booti ${kernel_addr_r} - ${fdt_addr}
 else
-    echo Button is off...
-    sleep 10
-    reset
+    gpio clear 27
+    echo SW3 unpressed!
+
+    sleep 1
+    echo Booting Utilities!
+    echo ===
+
+    fatload mmc 0:1 ${kernel_addr_r} /user/ImageLab3MyUtilities
+    setenv bootargs "${bootargs_orig} console=ttyAMA0 root=/dev/mmcblk0p2 rootwait"
+    booti ${kernel_addr_r} - ${fdt_addr}
 fi
 
