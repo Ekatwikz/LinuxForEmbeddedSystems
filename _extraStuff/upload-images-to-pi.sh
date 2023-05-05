@@ -5,6 +5,7 @@ HTTPPORT=8000
 USAGE="Usage: $0 [-p SSHPORT] [-q HTTPPORT] SSHDEST HTTPSERVERHOSTNAME [FILES]... | -h"
 SCRIPTDIR="$(realpath $(dirname "$0"))"
 BRDIR="/malina/$USER/buildroot-2023.02"
+MOUNTEDDOWNLOADDIR="user"
 
 main() {
 	SSHDEST=$1
@@ -15,7 +16,8 @@ main() {
 	ssh-keygen -f "$HOME/.ssh/known_hosts" -R "[${SSHDEST##*@}]:$SSHPORT" #|| err_msg "Coulnd't clear SSH key??"
 	rm -v "$HOME/.ssh/known_hosts" # tmp ...
 
-	cd "$BRDIR/output/images" || err_msg "Couldn't find images folder??"
+	# TODO: add -C ... opt
+	#cd "$BRDIR/output/images" || err_msg "Couldn't find images folder??"
 
 	echo
 	printf "Files in %s:\n" "$(pwd)"
@@ -44,7 +46,7 @@ main() {
 	printf "Starting SSH script\n"
 
 	$SCRIPTDIR/ssh-script.sh -p $SSHPORT "$SSHDEST" $SCRIPTDIR/download-to-mmcblk0p1.sh \
-		user "http://$HTTPSERVERHOSTNAME":$HTTPPORT ${TODOWNLOAD:+ $TODOWNLOAD} || err_kill_server "SSH script failed"
+		$MOUNTEDDOWNLOADDIR "http://$HTTPSERVERHOSTNAME":$HTTPPORT ${TODOWNLOAD:+ $TODOWNLOAD} || err_kill_server "SSH script failed"
 	kill_server
 }
 

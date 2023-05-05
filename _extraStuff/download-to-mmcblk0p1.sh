@@ -5,11 +5,12 @@
 # NB: Don't actually run this on the host! run my upload-images-to-pi script
 
 set -e
+MOUNTDEVICE=mmcblk0p1
 
 USAGE="Usage: $0 DOWNLOADDIR BASEURL [FILES]... | -h"
 
 main() {
-	SDMMOUNTPATH="/mnt/sd"
+	SDMMOUNTPATH="/mnt/$MOUNTDEVICE"
 	DOWNLOADDIR="$1"
 	BASEURL=$2 # TODO: "cleanup" url?
 	shift 2 || err_msg "$USAGE"
@@ -25,7 +26,7 @@ Mount Info:\n\
 	echo
 	printf "Making mount path and mounting SD\n"
 	mkdir -pv $SDMMOUNTPATH
-	mount -v /dev/mmcblk0p1 /mnt/sd || true # TODO: fix this...
+	mount -v "/dev/$MOUNTDEVICE" $SDMMOUNTPATH || true # TODO: fix this...
 	cd "$SDMMOUNTPATH"/"$DOWNLOADDIR"
 
 	echo
@@ -46,8 +47,8 @@ Mount Info:\n\
 	echo
 	printf "Done, synchronizing.\n"
 	sync
-	printf "Rebooting.\n"
-	reboot
+	#printf "Rebooting.\n" #TMP! TODO: Add option to reboot.
+	#reboot
 }
 
 check_opts() {
