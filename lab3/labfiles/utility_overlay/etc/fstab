@@ -1,0 +1,2 @@
+# /dev/mmcblk0p3
+LABEL=p3-label /share ntfs rw,auto,users,exec,nls=utf8,umask=003,gid=46,uid=1000    0   0
