@@ -2,6 +2,22 @@
 
 DAEMON_NAME="$0"
 
+start() {
+    [ -d /share ] || err_msg "Err: /share should exist. Cancelling."
+    daemon_msg "Creating service paths if they don't exist..."
+    [ -d /share/public_files ] || mkdir -pv /share/public_files
+    [ -d /share/protected_files ] || mkdir -pv /share/protected_files
+    chown -Rv smbusermain:smbgroup /share
+}
+
+stop() {
+    err_msg "This daemon can't sensibly be stopped."
+}
+
+restart() {
+    err_msg "This daemon can't sensibly be restarted."
+}
+
 daemon_msg() {
     printf "%s: %s\n" "$DAEMON_NAME" "$1"
 }
@@ -9,19 +25,6 @@ daemon_msg() {
 err_msg() {
     printf "%s:\n%s\n" "$DAEMON_NAME" "$1" >&2
     exit 1
-}
-
-start() {
-    daemon_msg "Creating folders if they don't exist..."
-    [ -d /share/public_files ]
-}
-
-stop() {
-    err_msg "This daemon can't sensibly stop."
-}
-
-restart() {
-    err_msg "This daemon can't sensibly restart."
 }
 
 case "$1" in
